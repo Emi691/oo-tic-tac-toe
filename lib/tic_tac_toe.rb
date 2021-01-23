@@ -12,7 +12,7 @@ attr_reader :board
 
     def input_to_index(string)
         number = string.to_i
-        board_number = number - 1
+        index = number - 1
     end 
 
     def position_taken?(index)
@@ -58,14 +58,14 @@ attr_reader :board
     def turn
         puts "What is your move?"
          input = gets
-        index = self.input_to_index(input)
-        if self.valid_move?(index)
+        index = input_to_index(input)
+        if valid_move?(index)
             token = current_player
-             self.move(index, token)     
+            move(index, token)     
         else
              turn
          end  
-         self.display_board       
+         display_board       
     end
 
     def won?
@@ -117,14 +117,14 @@ attr_reader :board
     end
 
     def play
-        until self.over? == true
+        while !self.over?
             self.turn
         end
 
         if WIN_COMBINATIONS.include?(self.won?) == true
-            puts "Congratulations"
+            puts "Congratulations #{self.winner}"
         elsif self.draw? == true
-            puts "Draw"
+            puts "Cat's Game!"
         end
     end  
 end
