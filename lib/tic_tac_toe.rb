@@ -24,7 +24,7 @@ attr_reader :board
     end
 
     def valid_move?(position)
-        if self.board[position] && self.position_taken?(position) == false
+        if !self.position_taken?(position) && position.between?(0,8) 
             true
         else 
             false
@@ -44,7 +44,7 @@ attr_reader :board
     end
     
     def move(index,token = "X")
-       self.board[index] = "#{token}"
+       self.board[index] = token
     end
 
     def display_board
@@ -56,15 +56,75 @@ attr_reader :board
     end
 
     def turn
-        puts "What is you move?"
-        move = gets
-        index = self.input_to_index(move)
-        if self.valid_move?(index) == true
-            self.move(index, self.current_player)
-            self.display_board
+        puts "What is your move?"
+         input = gets
+        index = self.input_to_index(input)
+        if self.valid_move?(index)
+            token = current_player
+             self.move(index, token)     
         else
-            self.turn
-        end         
+             turn
+         end  
+         self.display_board       
     end
 
+    def won?
+        WIN_COMBINATIONS.each_with_index do |combo, index|
+            if self.board[combo[0]] == self.board[combo[1]] && self.board[combo[0]] == self.board[combo[2]]
+                return WIN_COMBINATIONS[index]
+            end
+        end
+        if self.turn_count == 9
+            return false
+        end
+    end
+
+    def full?
+        if 
+        self.turn_count == 9
+        true
+        end
+    end
+
+    def draw?
+        if WIN_COMBINATIONS.include?(self.won?) == true
+            return false
+        elsif self.full?
+            true
+        else
+            false
+        end 
+    end
+
+    def over?
+        if WIN_COMBINATIONS.include?(self.won?) == true
+            true 
+        elsif self.draw?
+            true
+        else
+            false
+        end
+    end
+
+    def winner
+        if self.board[self.won?[0]] == "X"
+            "X"
+        elsif self.board[self.won?[0]] == "O"
+            "O"
+        else
+            nil
+        end 
+    end
+
+    def play
+        until self.over? == true
+            self.turn
+        end
+
+        if WIN_COMBINATIONS.include?(self.won?) == true
+            puts "Congratulations"
+        elsif self.draw? == true
+            puts "Draw"
+        end
+    end  
 end
