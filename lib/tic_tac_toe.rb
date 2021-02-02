@@ -8,6 +8,11 @@ attr_reader :board
     def initialize
         @board = []
         9.times { @board << " " }
+        puts " 1 | 2 | 3 "
+        puts " ---------- "
+        puts " 4 | 5 | 6 "
+        puts " ---------- "
+        puts " 7 | 8 | 9 "
     end
 
     def input_to_index(string)
@@ -56,7 +61,7 @@ attr_reader :board
     end
 
     def turn
-        puts "What is your move?"
+        puts "Please make your move by choosing a number 1-9"
          input = gets
         index = input_to_index(input)
         if valid_move?(index)
@@ -69,9 +74,9 @@ attr_reader :board
     end
 
     def won?
-        WIN_COMBINATIONS.each_with_index do |combo, index|
-            if self.board[combo[0]] == self.board[combo[1]] && self.board[combo[0]] == self.board[combo[2]]
-                return WIN_COMBINATIONS[index]
+        WIN_COMBINATIONS.each do |combo|
+            if self.position_taken?(combo[0]) && self.board[combo[0]] == self.board[combo[1]] && self.board[combo[0]] == self.board[combo[2]]
+                return combo
             end
         end
         if self.turn_count == 9
@@ -87,9 +92,7 @@ attr_reader :board
     end
 
     def draw?
-        if WIN_COMBINATIONS.include?(self.won?) == true
-            return false
-        elsif self.full?
+        if !self.won? && self.full?
             true
         else
             false
@@ -97,33 +100,30 @@ attr_reader :board
     end
 
     def over?
-        if WIN_COMBINATIONS.include?(self.won?) == true
+        if self.won? || self.draw?
             true 
-        elsif self.draw?
-            true
         else
             false
         end
     end
 
     def winner
-        if self.board[self.won?[0]] == "X"
-            "X"
-        elsif self.board[self.won?[0]] == "O"
-            "O"
+        person = self.won?
+        if person 
+            self.board[person[0]]
         else
             nil
         end 
     end
 
     def play
-        while !self.over?
-            self.turn
+        until over?
+            turn
         end
-
-        if WIN_COMBINATIONS.include?(self.won?) == true
-            puts "Congratulations #{self.winner}"
-        elsif self.draw? == true
+    
+        if self.winner 
+            puts "Congratulations #{self.winner}!"
+        else 
             puts "Cat's Game!"
         end
     end  
